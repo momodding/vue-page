@@ -8,6 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     status: '',
+    respMessage: '',
     token: localStorage.getItem('token') || '',
     user: {}
   },
@@ -19,13 +20,16 @@ export default new Vuex.Store({
       state.status = 'success'
       state.token = token
       state.user = user
+      state.respMessage = ''
     },
-    auth_error(state) {
+    auth_error(state, message) {
       state.status = 'error'
+      state.respMessage = message
     },
     logout(state) {
       state.status = ''
       state.token = ''
+      state.respMessage = ''
     },
   },
   actions: {
@@ -33,7 +37,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('auth_request')
         axios({ url: 'http://localhost:3000/auth/login', data: user, method: 'POST' })
-          .then(resp => {
+          .then((resp) => {
             const token = resp.data.access_token
             const user = JSON.stringify(resp.data)
             localStorage.setItem('token', token)
@@ -42,8 +46,8 @@ export default new Vuex.Store({
             commit('auth_success', token, JSON.parse(user))
             resolve(resp)
           })
-          .catch(err => {
-            commit('auth_error')
+          .catch((err) => {
+            commit('auth_error', err.response.data.error)
             localStorage.removeItem('token')
             reject(err)
           })
@@ -81,5 +85,6 @@ export default new Vuex.Store({
   getters: {
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
+    responseMessage: state => state.respMessage,
   }
 })

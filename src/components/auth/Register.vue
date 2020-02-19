@@ -1,34 +1,76 @@
 <template>
-  <div>
-    <h4>Register</h4>
-    <form @submit.prevent="register">
-      <label for="name">Username</label>
-      <div>
-          <input id="name" type="text" v-model="name" required autofocus>
+  <div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+      <div class="col-md-8">
+        <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+          {{ alertMessage }}
+        </b-alert>
+        <article class="card mx-auto">
+          <div class="card-header">
+            <h4>Register</h4>
+          </div>
+          <div class="card-body">
+            <form @submit.prevent="register">
+              <b-form-group
+                id="fieldset-username"
+                label="Enter your Username"
+                label-for="input-username"
+              >
+                <b-form-input
+                  id="input-username"
+                  v-model="name"
+                  trim
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group
+                id="fieldset-email"
+                label="Enter your Email"
+                label-for="input-email"
+              >
+                <b-form-input
+                  id="input-email"
+                  v-model="email"
+                  trim
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group
+                id="fieldset-password"
+                label="Enter your Password"
+                label-for="input-password"
+              >
+                <b-form-input
+                  id="input-password"
+                  v-model="password"
+                  type="password"
+                  trim
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group
+                id="fieldset-password-confirm"
+                label="Enter your Password Confirmation"
+                label-for="input-password-confirm"
+                :invalid-feedback="invalidFeedback"
+                :valid-feedback="validFeedback"
+                :state="state"
+              >
+                <b-form-input
+                  id="input-password-confirm"
+                  v-model="passwordConfirmation"
+                  type="password"
+                  :state="state"
+                  trim
+                ></b-form-input>
+              </b-form-group>
+              <b-button variant="outline-primary" type="submit">Register</b-button>
+            </form>
+          </div>
+        </article>
       </div>
-
-      <label for="email" >E-Mail Address</label>
-      <div>
-          <input id="email" type="email" v-model="email" required>
-      </div>
-
-      <label for="password">Password</label>
-      <div>
-          <input id="password" type="password" v-model="password" required>
-      </div>
-
-      <label for="password-confirm">Confirm Password</label>
-      <div>
-          <input id="password-confirm" type="password" v-model="password_confirmation" required>
-      </div>
-
-      <div>
-          <button type="submit">Register</button>
-      </div>
-    </form>
+    </div>
   </div>
 </template>
 <script>
+/* eslint-disable */
 export default {
   props: ['nextUrl'],
   data() {
@@ -36,9 +78,25 @@ export default {
       name: '',
       email: '',
       password: '',
-      password_confirmation: '',
+      passwordConfirmation: '',
       is_admin: null,
+      showDismissibleAlert: false,
+      alertMessage: '',
     };
+  },
+  computed: {
+    state() {
+      return this.password.length > 0 && this.password === this.passwordConfirmation;
+    },
+    invalidFeedback() {
+      if (this.password !== this.passwordConfirmation) {
+        return 'Password not match';
+      }
+      return 'Please enter confirmation password';
+    },
+    validFeedback() {
+      return this.passwordConfirm === true ? 'Thank you' : '';
+    },
   },
   methods: {
     register() {
@@ -53,53 +111,10 @@ export default {
           this.$router.push('dashboard');
         })
         .catch((err) => {
-        // eslint-disable-next-line
-          console.log(err)
+          this.alertMessage = this.$store.getters.responseMessage;
+          console.log(err);
         });
     },
-    // eslint-disable-next-line
-    // handleSubmit(e) {
-    //   e.preventDefault();
-
-    //   if (
-    //     this.password === this.password_confirmation &&
-    //     this.password.length > 0
-    //   ) {
-    //     let url = 'http://localhost:3000/register';
-    //     if (this.is_admin !== null || this.is_admin === 1) {
-    //       url = 'http://localhost:3000/register-admin';
-    //     }
-    //     this.$http
-    //       .post(url, {
-    //         name: this.name,
-    //         email: this.email,
-    //         password: this.password,
-    //         is_admin: this.is_admin,
-    //       })
-    //       .then((response) => {
-    //         localStorage.setItem('user', JSON.stringify(response.data.user));
-    //         localStorage.setItem('jwt', response.data.token);
-
-    //         if (localStorage.getItem('jwt') != null) {
-    //           this.$emit('loggedIn');
-    //           if (this.$route.params.nextUrl != null) {
-    //             this.$router.push(this.$route.params.nextUrl);
-    //           } else {
-    //             this.$router.push('/');
-    //           }
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         // eslint-disable-next-line
-    //         console.error(error);
-    //       });
-    //   } else {
-    //     this.password = '';
-    //     this.passwordConfirm = '';
-    //     // eslint-disable-next-line
-    //     return alert('Passwords do not match');
-    //   }
-    // },
   },
 };
 </script>
