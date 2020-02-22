@@ -2,11 +2,19 @@
   <div class="hello">
     <h1>Welcome to regular users page</h1>
     <h2>{{ msg }}</h2>
+    <TodoPage/>
+    <TodoView/>
   </div>
 </template>
 
 <script>
+import TodoPage from './pages/Todo/TodoForm';
+import TodoView from './pages/Todo/TodoView';
+
 export default {
+  components: {
+    TodoPage, TodoView,
+  },
   data() {
     return {
       msg: 'The commoners',
