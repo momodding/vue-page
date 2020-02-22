@@ -57,7 +57,12 @@ export default {
       this.$store.dispatch('createTask', {
         taskName: this.taskName,
         taskDescription: this.taskDescription,
-      }).catch((err) => {
+      })
+      .then((resp) => {
+        this.taskName = ''
+        this.taskDescription = ""
+      })
+      .catch((err) => {
         this.alertMessage = err;
         this.showDismissibleAlert = true;
       });

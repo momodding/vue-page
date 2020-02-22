@@ -8,7 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     status: '',
-    respMessage: '',
+    respMessage: {},
     token: localStorage.getItem('token') || '',
     user: {},
     todo: {},
@@ -41,7 +41,11 @@ export default new Vuex.Store({
       state.status = 'success'
       state.todo = todo
       state.todos.push(todo)
-    }
+    },
+    todo_delete: (state, id) => {
+      state.status = 'success'
+      state.todos = [...state.todos.filter(el => el.id !== id)]
+    },
   },
   actions: {
     login({ commit }, user) {
@@ -78,7 +82,7 @@ export default new Vuex.Store({
             resolve(resp);
           })
           .catch(err => {
-            commit('request_error', err);
+            commit('request_error', err.response);
             localStorage.removeItem('token');
             reject(err);
           })
@@ -106,14 +110,14 @@ export default new Vuex.Store({
           resolve(resp.data);
         })
         .catch((err) => {
-          commit('request_error', err.response.data.error);
+          commit('request_error', err.response);
           reject(err);
         });
       });
     },
     createTask({ commit }, todo) {
       return new Promise((resolve, reject) => {
-        axios({
+        this._vm.$axios({
           url: 'http://localhost:3000/todos',
           data: todo, method: 'POST',
           headers: {
@@ -126,11 +130,30 @@ export default new Vuex.Store({
           resolve(resp.data);
         }).catch((err) => {
           console.log(err);
-          commit('request_error', err.response.data.error);
+          commit('request_error', err.response);
           reject(err);
         });
       })
     },
+    deleteTask({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axios({
+          url: 'http://localhost:3000/todos/'+id,
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + this.state.token
+          }
+        })
+        .then((resp) => {
+          commit('todo_delete', id);
+          resolve(resp);
+        }).catch((err) => {
+          console.log(err);
+          commit('request_error', err.response);
+          reject(err);
+        });
+      });
+    }
   },
   getters: {
     isLoggedIn: state => !!state.token,

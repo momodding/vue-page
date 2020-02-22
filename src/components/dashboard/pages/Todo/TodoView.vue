@@ -9,6 +9,7 @@
                             v-bind:data="todo"
                             >
             {{ todo.taskName }} --- {{ todo.taskDescription }}
+            <b-button variant="outline-danger" @click="deleteTask(todo.id)">Delete</b-button>
           </b-list-group-item>
         </b-list-group>
       </div>
@@ -35,7 +36,11 @@ export default {
       }
     },
   },
-  methods: {},
+  methods: {
+    deleteTask(id) {
+      this.$store.dispatch('deleteTask', id);
+    }
+  },
   mounted() {
     this.$store.dispatch('getTask');
   }

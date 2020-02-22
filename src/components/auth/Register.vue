@@ -111,7 +111,7 @@ export default {
           this.$router.push('dashboard');
         })
         .catch((err) => {
-          this.alertMessage = this.$store.getters.responseMessage;
+          this.alertMessage = this.$store.getters.responseMessage.data.error;
           console.log(err);
         });
     },
