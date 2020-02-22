@@ -12,35 +12,35 @@ export default new Vuex.Store({
     token: localStorage.getItem('token') || '',
     user: {},
     todo: {},
-    todos: []
+    todos: [{}],
   },
   mutations: {
-    auth_request(state) {
+    auth_request: (state) => {
       state.status = 'loading'
     },
-    auth_success(state, token, user) {
+    auth_success: (state, {user, token}) => {
       state.status = 'success'
-      state.token = token
       state.user = user
+      state.token = token
       state.respMessage = ''
     },
-    request_error(state, message) {
+    request_error: (state, {message}) => {
       state.status = 'error'
       state.respMessage = message
     },
-    logout(state) {
+    logout: (state) => {
       state.status = ''
       state.token = ''
       state.respMessage = ''
     },
-    todo_list(state, status, todos) {
-      state.status = status
+    todo_list: (state, todos) => {
+      state.status = 'success'
       state.todos = todos
     },
-    todo_post(state, status, todo) {
-      state.status = status
+    todo_post: (state, todo) => {
+      state.status = 'success'
       state.todo = todo
-      state.todos = [...state.todos.map(item => item.id !== todo.id ? item : {...item, todo})]
+      state.todos.push(todo)
     }
   },
   actions: {
@@ -53,8 +53,8 @@ export default new Vuex.Store({
             const user = JSON.stringify(resp.data);
             localStorage.setItem('token', token);
             localStorage.setItem('user', user);
-            axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
-            commit('auth_success', token, JSON.parse(user));
+            this._vm.$axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
+            commit('auth_success', {token:token, user:JSON.parse(user)});
             resolve(resp);
           })
           .catch((err) => {
@@ -67,14 +67,14 @@ export default new Vuex.Store({
     register({ commit }, user) {
       return new Promise((resolve, reject) => {
         commit('auth_request');
-        axios({ url: 'http://localhost:3000/auth/register', data: user, method: 'POST' })
+        this._vm.$axios({ url: 'http://localhost:3000/auth/register', data: user, method: 'POST' })
           .then(resp => {
             const token = resp.data.access_token;
             const user = JSON.stringify(resp.data);
             localStorage.setItem('token', token);
             localStorage.setItem('user', user);
-            axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
-            commit('auth_success', token, user)
+            this._vm.$axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
+            commit('auth_success', { token: token, user: JSON.parse(user) })
             resolve(resp);
           })
           .catch(err => {
@@ -94,7 +94,7 @@ export default new Vuex.Store({
     },
     getTask({ commit }) {
       return new Promise((resolve, reject) => {
-        axios({
+        this._vm.$axios({
           url: 'http://localhost:3000/todos',
           method: 'GET',
           headers: {
@@ -102,7 +102,7 @@ export default new Vuex.Store({
           }
         })
         .then((resp) => {
-          commit('todo_list', 'success', resp.data);
+          commit('todo_list', JSON.parse(JSON.stringify(resp.data)));
           resolve(resp.data);
         })
         .catch((err) => {
@@ -121,7 +121,8 @@ export default new Vuex.Store({
           }
         })
         .then((resp) => {
-          commit('todo_post', 'success', resp.data);
+          const todoResp = JSON.parse(JSON.stringify(resp.data));
+          commit('todo_post', todoResp);
           resolve(resp.data);
         }).catch((err) => {
           console.log(err);

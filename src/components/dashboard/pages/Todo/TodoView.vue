@@ -20,7 +20,7 @@
 export default {
   data() {
     return {
-      todoList: [],
+      todoList: [{}],
     }
   },
   computed: {
@@ -30,26 +30,14 @@ export default {
   },
   watch: {
     todosFetch(val) {
-      console.log(val);
-      this.todoList.push(this.$store.getters.todo);
-      if (val) {
-        console.log(todoList);
+      if (val && val.length != 0) {
+        this.todoList = val;
       }
     },
   },
-  methods: {
-    getTodoList() {
-      this.$store.dispatch('getTask')
-      .then((resp) => {
-        this.todoList = resp;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    }
-  },
+  methods: {},
   mounted() {
-    this.getTodoList();
+    this.$store.dispatch('getTask');
   }
 }
 </script>

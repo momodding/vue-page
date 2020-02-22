@@ -33,7 +33,7 @@
                   v-model="taskDescription"
                 ></b-form-textarea>
               </b-form-group>
-              <b-button variant="outline-primary" type="submit">Login</b-button>
+              <b-button variant="outline-primary" type="submit">Create Task!</b-button>
             </form>
           </div>
         </article>
@@ -57,12 +57,9 @@ export default {
       this.$store.dispatch('createTask', {
         taskName: this.taskName,
         taskDescription: this.taskDescription,
-      })
-      .then((resp) => {
-        console.log(resp);
-      })
-      .catch((err) => {
-        console.log(err);
+      }).catch((err) => {
+        this.alertMessage = err;
+        this.showDismissibleAlert = true;
       });
     },
   },
