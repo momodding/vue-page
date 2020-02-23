@@ -9,6 +9,7 @@
                             v-bind:data="todo"
                             >
             {{ todo.taskName }} --- {{ todo.taskDescription }}
+            <b-button variant="outline-success" @click="editTask(index)">Edit</b-button> |
             <b-button variant="outline-danger" @click="deleteTask(todo.id)">Delete</b-button>
           </b-list-group-item>
         </b-list-group>
@@ -21,6 +22,7 @@
 export default {
   data() {
     return {
+      todo: {},
       todoList: [{}],
     }
   },
@@ -39,7 +41,12 @@ export default {
   methods: {
     deleteTask(id) {
       this.$store.dispatch('deleteTask', id);
-    }
+    },
+    editTask(index) {
+      const todo = this.$store.getters.todos[index];
+      console.log(todo);
+      this.$store.dispatch('editTask', todo.taskName, todo.taskDescription);
+    },
   },
   mounted() {
     this.$store.dispatch('getTask');

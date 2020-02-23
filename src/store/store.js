@@ -13,6 +13,8 @@ export default new Vuex.Store({
     user: {},
     todo: {},
     todos: [{}],
+    taskName: '',
+    taskDescription: '',
   },
   mutations: {
     auth_request: (state) => {
@@ -46,18 +48,22 @@ export default new Vuex.Store({
       state.status = 'success'
       state.todos = [...state.todos.filter(el => el.id !== id)]
     },
+    todo_edit: (state, {taskName, taskDescription}) => {
+      state.taskName = taskName
+      state.taskDescription = taskDescription
+    }
   },
   actions: {
     login({ commit }, user) {
       return new Promise((resolve, reject) => {
         commit('auth_request');
-        axios({ url: 'http://localhost:3000/auth/login', data: user, method: 'POST' })
+        this._vm.$axios({ url: 'http://localhost:3000/auth/login', data: user, method: 'POST' })
           .then((resp) => {
             const token = resp.data.access_token;
             const user = JSON.stringify(resp.data);
             localStorage.setItem('token', token);
             localStorage.setItem('user', user);
-            this._vm.$axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
+            // this._vm.$axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
             commit('auth_success', {token:token, user:JSON.parse(user)});
             resolve(resp);
           })
@@ -77,7 +83,7 @@ export default new Vuex.Store({
             const user = JSON.stringify(resp.data);
             localStorage.setItem('token', token);
             localStorage.setItem('user', user);
-            this._vm.$axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
+            // this._vm.$axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
             commit('auth_success', { token: token, user: JSON.parse(user) })
             resolve(resp);
           })
@@ -153,6 +159,12 @@ export default new Vuex.Store({
           reject(err);
         });
       });
+    },
+    editTask({ commit }, taskName, taskDescription) {
+      return new Promise((resolve, reject) => {
+        commit('todo_edit', {taskName:taskName, taskDescription:taskDescription});
+        resolve();
+      })
     }
   },
   getters: {
@@ -162,5 +174,7 @@ export default new Vuex.Store({
     responseMessage: state => state.respMessage,
     todo: state => state.todo,
     todos: state => state.todos,
+    taskName: state => state.taskName,
+    taskDescription: state => state.taskDescription,
   }
 })

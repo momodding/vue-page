@@ -52,6 +52,14 @@ export default {
       alertMessage: "",
     }
   },
+  computed: {
+    setTaskName() {
+      return this.taskName;
+    },
+    setTaskDescription() {
+      return this.taskDescription;
+    }
+  },
   methods: {
     createTodo() {
       this.$store.dispatch('createTask', {
