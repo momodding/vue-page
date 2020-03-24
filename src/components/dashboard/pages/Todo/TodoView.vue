@@ -48,7 +48,7 @@ export default {
     //   deep: true
     // }
     todosFetch(val) {
-      if (val && val.length != 1) {
+      if (val) {
         this.todoList = val;
       }
     },
