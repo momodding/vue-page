@@ -71,7 +71,7 @@ export default new Vuex.Store({
             const user = JSON.stringify(resp.data);
             localStorage.setItem('token', token);
             localStorage.setItem('user', user);
-            // this._vm.$axios.defaults.headers.common['Authorization'] = 'Bearer '.token;
+            
             commit('auth_success', {token:token, user:JSON.parse(user)});
             resolve(resp);
           })
@@ -135,9 +135,9 @@ export default new Vuex.Store({
         this._vm.$axios({
           url: 'http://localhost:3000/todos',
           data: todo, method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + this.state.token
-          }
+          // headers: {
+          //   'Authorization': 'Bearer ' + this.state.token
+          // }
         })
         .then((resp) => {
           const todoResp = JSON.parse(JSON.stringify(resp.data));

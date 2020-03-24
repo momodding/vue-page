@@ -10,11 +10,13 @@ import router from './router';
 import store from './store/store';
 
 Vue.prototype.$axios = axios;
-const token = localStorage.getItem('token');
-if (token) {
-  // eslint-disable-next-line
-  Vue.prototype.$axios.defaults.headers.common['Authorization'] = 'Bearer ' . token;
-}
+/* eslint-disable */
+Vue.prototype.$axios.interceptors.request.use(
+  config => {
+    if (store.getters.isLoggedIn) config.headers['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+    return config;
+  }
+);
 
 Vue.config.productionTip = false;
 
