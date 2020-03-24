@@ -1,7 +1,7 @@
 /* eslint-disable */
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
+// import axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -13,8 +13,6 @@ export default new Vuex.Store({
     user: {},
     todo: {},
     todos: [{}],
-    taskName: '',
-    taskDescription: '',
   },
   mutations: {
     auth_request: (state) => {
@@ -44,13 +42,23 @@ export default new Vuex.Store({
       state.todo = todo
       state.todos.push(todo)
     },
+    todo_update: (state, todo) => {
+      state.status = 'success'
+      state.todo = todo
+      state.todos.filter((el, index) => {
+        if (el.id == todo.id) {
+          // console.log('element: ', el.id, 'todo: ', todo.id)
+          // state.todos[index] = todo
+          Vue.set(state.todos, index, todo);
+        }
+      })
+    },
     todo_delete: (state, id) => {
       state.status = 'success'
       state.todos = [...state.todos.filter(el => el.id !== id)]
     },
-    todo_edit: (state, {taskName, taskDescription}) => {
-      state.taskName = taskName
-      state.taskDescription = taskDescription
+    todo_edit: (state, todo) => {
+      state.todo = todo
     }
   },
   actions: {
@@ -98,7 +106,8 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('logout')
         localStorage.removeItem('token')
-        delete axios.defaults.headers.common['Authorization']
+        localStorage.removeItem('user')
+        delete this._vm.$axios.defaults.headers.common['Authorization']
         resolve();
       })
     },
@@ -132,7 +141,27 @@ export default new Vuex.Store({
         })
         .then((resp) => {
           const todoResp = JSON.parse(JSON.stringify(resp.data));
-          commit('todo_post', todoResp);
+          commit('todo_post', todo);
+          resolve(resp.data);
+        }).catch((err) => {
+          console.log(err);
+          commit('request_error', err.response);
+          reject(err);
+        });
+      })
+    },
+    updateTask({ commit }, {todo, id}) {
+      return new Promise((resolve, reject) => {
+        this._vm.$axios({
+          url: 'http://localhost:3000/todos/' + id,
+          data: todo, method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + this.state.token
+          }
+        })
+        .then((resp) => {
+          const todoResp = JSON.parse(JSON.stringify(resp.data));
+          commit('todo_update', todoResp);
           resolve(resp.data);
         }).catch((err) => {
           console.log(err);
@@ -160,9 +189,9 @@ export default new Vuex.Store({
         });
       });
     },
-    editTask({ commit }, taskName, taskDescription) {
+    editTask({ commit }, todo) {
       return new Promise((resolve, reject) => {
-        commit('todo_edit', {taskName:taskName, taskDescription:taskDescription});
+        commit('todo_edit', todo);
         resolve();
       })
     }
@@ -174,7 +203,5 @@ export default new Vuex.Store({
     responseMessage: state => state.respMessage,
     todo: state => state.todo,
     todos: state => state.todos,
-    taskName: state => state.taskName,
-    taskDescription: state => state.taskDescription,
   }
 })

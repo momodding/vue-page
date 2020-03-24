@@ -39,13 +39,21 @@ export default {
   },
   created: function () {
     const instance = this.$axios.create();
-    instance.interceptors.response.use(undefined, function (err) {
-      return new Promise(function (resolve, reject) {
-        if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
-          this.$store.dispatch(logout);
-        }
+    this.$axios.interceptors.response.use((response) => {
+      return response
+    }, (err) => {
+      // console.log("result:", err.response);
+      if (err.response.status === 401) {
+        this.$store.dispatch('logout')
+        .then(() => {
+          this.$router.push('/login')
+        });
+        // console.log("logout");
+        return Promise.resolve(err.response)
+      } else {
+        return Promise.reject(err)
         throw err;
-      });
+      }
     });
   }
 };

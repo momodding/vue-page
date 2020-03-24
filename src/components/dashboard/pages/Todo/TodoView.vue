@@ -19,6 +19,7 @@
 </template>
 <script>
 /* eslint-disable */
+// import {mapGetters} from 'vuex';
 export default {
   data() {
     return {
@@ -27,16 +28,40 @@ export default {
     }
   },
   computed: {
-    todosFetch() {
+    todosFetch: function() {
       return this.$store.getters.todos;
     },
+    // ...mapGetters({
+    //     todoDataList: 'todos'
+    // })
   },
   watch: {
+    // '$store.getters.todos': {
+    //   handler: function(newVal, oldVal) {
+    //     // console.log(newVal, "---", oldVal)
+    //     if (newVal && newVal.length != 0) {
+    //       this.todoList = newVal;
+    //       console.log(this.todoList);
+    //     }
+    //   },
+    //   immediate: true,
+    //   deep: true
+    // }
     todosFetch(val) {
-      if (val && val.length != 0) {
+      if (val && val.length != 1) {
         this.todoList = val;
       }
     },
+    // todoDataList: {
+    //     deep: true,
+    //     immediate: true,
+    //     handler(nVal, oVal) {
+    //       if (!!nVal) {
+    //         console.log("data updated")
+    //       }
+    //       console.log("inputValue", nVal, oVal);
+    //     }
+    // },
   },
   methods: {
     deleteTask(id) {
@@ -44,12 +69,16 @@ export default {
     },
     editTask(index) {
       const todo = this.$store.getters.todos[index];
-      console.log(todo);
-      this.$store.dispatch('editTask', todo.taskName, todo.taskDescription);
+      this.$store.dispatch('editTask', todo);
     },
   },
-  mounted() {
+  created() {
     this.$store.dispatch('getTask');
-  }
+  },
+  // mounted() {
+  //   this.$store.watch(state => state.todos, () => {
+  //     console.log("updated todolist")
+  //   })
+  // },
 }
 </script>
