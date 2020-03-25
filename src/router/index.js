@@ -6,6 +6,7 @@ import HelloWorld from '@/components/HelloWorld';
 import LoginPage from '@/components/auth/Login';
 import RegisterPage from '@/components/auth/Register';
 import UserBoard from '@/components/dashboard/UserBoard';
+import ListBoard from '@/components/dashboard/ListBoard';
 
 Vue.use(Router);
 
@@ -37,6 +38,15 @@ const router = new Router({
       path: '/dashboard',
       name: 'userboard',
       component: UserBoard,
+      meta: {
+        requiresAuth: true,
+        is_admin: true
+      },
+    },
+    {
+      path: '/dashboard-list',
+      name: 'listboard',
+      component: ListBoard,
       meta: {
         requiresAuth: true,
         is_admin: true

@@ -52,7 +52,7 @@
           <b-nav-item-dropdown v-if="isLoggedIn" right>
             <!-- Using 'button-content' slot -->
             <template v-slot:button-content>
-              <em>User</em>
+              <em>{{username}}</em>
             </template>
             <b-dropdown-item href="#">Profile</b-dropdown-item>
             <b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
@@ -65,6 +65,11 @@
 <script>
 export default {
   /* eslint-disable */
+  data() {
+    return {
+      username: "",
+    }
+  },
    methods: {
     logout: function () {
       this.$store.dispatch('logout')
@@ -78,6 +83,10 @@ export default {
       return this.$store.getters.isLoggedIn;
     },
   },
+  created() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    this.username = user.username;
+  }
 };
 </script>
 <style scope>

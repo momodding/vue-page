@@ -24,7 +24,7 @@ Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 
 /* eslint-disable no-new */
-new Vue({
+var app = new Vue({
   el: '#app',
   router,
   store,
