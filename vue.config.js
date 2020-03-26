@@ -2,5 +2,7 @@ module.exports = {
   configureWebpack: {
     devtool: 'source-map'
   },
-  publicPath: '/vue-vuex-nest/'
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/<project-name>/'
+    : '/'
 }
