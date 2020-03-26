@@ -71,7 +71,7 @@ export default new Vuex.Store({
             const user = JSON.stringify(resp.data);
             localStorage.setItem('token', token);
             localStorage.setItem('user', user);
-            
+
             commit('auth_success', {token:token, user:JSON.parse(user)});
             resolve(resp);
           })
@@ -141,7 +141,7 @@ export default new Vuex.Store({
         })
         .then((resp) => {
           const todoResp = JSON.parse(JSON.stringify(resp.data));
-          commit('todo_post', todo);
+          commit('todo_post', todoResp);
           resolve(resp.data);
         }).catch((err) => {
           console.log(err);

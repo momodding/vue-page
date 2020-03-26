@@ -30,15 +30,16 @@
               <div class="col-md-1">
                 <b-button v-if="todo.isEditForm"
                 variant="outline-warning" @click="editCancel(index)">cancel</b-button>
-                <b-button v-else
-                variant="outline-danger" @click="deleteTask(todo.id)">delete</b-button>
+                <b-button v-else :disabled="!todo.id ? true : false"
+                :variant="todo.id ? 'outline-danger' : 'outline-secondary'"
+                @click="deleteTask(todo.id)">delete</b-button>
               </div>
             </div>
           </div>
           <div class="card-body text-left">
             <form v-bind:data-unq="'form-'+todo.id" class="login">
               <b-form-group
-                id="fieldset-task-id"
+                :id="'fieldset-task-id-'+index"
               >
                 <input type="hidden" name="input-task-id" :value="todo.id">
               </b-form-group>
@@ -119,7 +120,31 @@ export default {
   },
   methods: {
     deleteTask(id) {
-      this.$store.dispatch('deleteTask', id);
+      this.$swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.value) {
+          this.$store.dispatch('deleteTask', id).then((resp) => {
+            this.$swal.fire(
+              'Deleted!',
+              'Your todo has been deleted.',
+              'success'
+            );
+          }).catch((err) => {
+            this.$swal.fire(
+              'Failed!',
+              'Failed delete todo',
+              'error'
+            );
+          });
+        }
+      });
     },
     editTask(index) {
       this.todoList.filter((el, idx) => {
@@ -141,12 +166,6 @@ export default {
           taskName: data.taskName,
           taskDescription: data.taskDescription,
         }, id: data.id})
-        // .then((resp) => {
-        //   this.taskId = null;
-        //   this.taskName = "";
-        //   this.taskDescription = "";
-        //   this.isEdit = false;
-        // })
         .catch((err) => {
           this.alertMessage = err;
           this.showDismissibleAlert = true;
@@ -156,10 +175,6 @@ export default {
           taskName: data.taskName,
           taskDescription: data.taskDescription,
         })
-        // .then((resp) => {
-        //   this.taskName = "";
-        //   this.taskDescription = "";
-        // })
         .catch((err) => {
           this.alertMessage = err;
           this.showDismissibleAlert = true;

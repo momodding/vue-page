@@ -44,7 +44,7 @@ const router = new Router({
       },
     },
     {
-      path: '/dashboard-list',
+      path: '/dashboard/list',
       name: 'listboard',
       component: ListBoard,
       meta: {
