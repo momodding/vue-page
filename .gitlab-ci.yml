@@ -1,16 +1,15 @@
-pages: # the job must be named pages
+pages:
   image: node:latest
   stage: deploy
   script:
-    - npm ci
-    # - npm install --progress=false
+    - npm install --progress=false
     - npm run build
     - rm -rf public
     - mkdir public
     - cp -r dist/* public
-    - find public -type f -regex '.*\.\(htm\|html\|txt\|text\|js\|css\)$' -exec gzip -f -k {} \;
   artifacts:
+    expire_in: 1 week
     paths:
-      - public # artifact path must be /public for GitLab Pages to pick it up
+      - public
   only:
     - master
