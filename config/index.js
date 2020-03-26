@@ -9,8 +9,8 @@ module.exports = {
 
     // Paths
     assetsSubDirectory: 'static',
-    // assetsPublicPath: '/',
-    assetsPublicPath: '/' + process.env.CI_PROJECT_NAME + '/',
+    assetsPublicPath: '/',
+    // assetsPublicPath: '/' + process.env.CI_PROJECT_NAME + '/',
     proxyTable: {},
 
     // Various Dev Server settings
