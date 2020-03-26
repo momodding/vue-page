@@ -1,6 +1,6 @@
 module.exports = {
-  configureWebpack: {
-    devtool: 'source-map'
-  },
-  publicPath: '/vue-vuex-nest/'
+  // configureWebpack: {
+  //   devtool: 'source-map'
+  // },
+  publicPath: '/' + process.env.CI_PROJECT_NAME + '/'
 }
