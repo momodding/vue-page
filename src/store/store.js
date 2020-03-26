@@ -65,7 +65,7 @@ export default new Vuex.Store({
     login({ commit }, user) {
       return new Promise((resolve, reject) => {
         commit('auth_request');
-        this._vm.$axios({ url: 'http://localhost:3000/auth/login', data: user, method: 'POST' })
+        this._vm.$axios({ url: 'https://nest-js-be.herokuapp.com/auth/login', data: user, method: 'POST' })
           .then((resp) => {
             const token = resp.data.access_token;
             const user = JSON.stringify(resp.data);
@@ -85,7 +85,7 @@ export default new Vuex.Store({
     register({ commit }, user) {
       return new Promise((resolve, reject) => {
         commit('auth_request');
-        this._vm.$axios({ url: 'http://localhost:3000/auth/register', data: user, method: 'POST' })
+        this._vm.$axios({ url: 'https://nest-js-be.herokuapp.com/auth/register', data: user, method: 'POST' })
           .then(resp => {
             const token = resp.data.access_token;
             const user = JSON.stringify(resp.data);
@@ -114,7 +114,7 @@ export default new Vuex.Store({
     getTask({ commit }) {
       return new Promise((resolve, reject) => {
         this._vm.$axios({
-          url: 'http://localhost:3000/todos',
+          url: 'https://nest-js-be.herokuapp.com/todos',
           method: 'GET',
           headers: {
             'Authorization': 'Bearer ' + this.state.token
@@ -133,7 +133,7 @@ export default new Vuex.Store({
     createTask({ commit }, todo) {
       return new Promise((resolve, reject) => {
         this._vm.$axios({
-          url: 'http://localhost:3000/todos',
+          url: 'https://nest-js-be.herokuapp.com/todos',
           data: todo, method: 'POST',
           // headers: {
           //   'Authorization': 'Bearer ' + this.state.token
@@ -153,7 +153,7 @@ export default new Vuex.Store({
     updateTask({ commit }, {todo, id}) {
       return new Promise((resolve, reject) => {
         this._vm.$axios({
-          url: 'http://localhost:3000/todos/' + id,
+          url: 'https://nest-js-be.herokuapp.com/todos/' + id,
           data: todo, method: 'PUT',
           headers: {
             'Authorization': 'Bearer ' + this.state.token
@@ -173,7 +173,7 @@ export default new Vuex.Store({
     deleteTask({ commit }, id) {
       return new Promise((resolve, reject) => {
         this._vm.$axios({
-          url: 'http://localhost:3000/todos/'+id,
+          url: 'https://nest-js-be.herokuapp.com/todos/'+id,
           method: 'DELETE',
           headers: {
             'Authorization': 'Bearer ' + this.state.token
